@@ -13,9 +13,18 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>rest-service</name>
 	<description>Demo project for Spring Boot</description>
+
 	<properties>
 		<java.version>1.8</java.version>
+		<!-- SONAR -->
+		<jacoco.outputDir>${project.build.directory}</jacoco.outputDir>
+		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
+		<sonar.jacoco.itReportPath>target/jacoco-it.exec</sonar.jacoco.itReportPath>
+		<sonar.jacoco.reportPath>target/jacoco.exec</sonar.jacoco.reportPath>
+		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+		<sonar.language>java</sonar.language>
 	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -53,6 +62,13 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<inherited>true</inherited>
+			</plugin>
+
 		</plugins>
 	</build>
 
