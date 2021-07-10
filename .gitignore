@@ -16,4 +16,6 @@ dependency-reduced-pom.xml
 README.html
 *.iml
 .idea
+*terraform
+*.terraform
 
