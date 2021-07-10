@@ -29,3 +29,19 @@ variable "public_subnets" {
 variable "kubeconfig_path" {
   description = "Path where the config file for kubectl should be written to"
 }
+
+variable "instances_desired_size" {
+  description = "Desired number of instances in the eks cluster"
+}
+
+variable "instances_max_size" {
+  description = "Maximum number of instances in the eks cluster"
+}
+
+variable "instances_min_size" {
+  description = "Minimum number of instances in the eks cluster"
+}
+
+variable "instance_type" {
+  description = "Type of instance to use in the eks cluster"
+}

@@ -13,6 +13,26 @@ variable "region" {
   default     = "us-east-1"
 }
 
+variable "instances_desired_size" {
+  description = "Desired number of instances in the eks cluster"
+  default     = 2
+}
+
+variable "instances_max_size" {
+  description = "Maximum number of instances in the eks cluster"
+  default     = 4
+}
+
+variable "instances_min_size" {
+  description = "Minimum number of instances in the eks cluster"
+  default     = 2
+}
+
+variable "instance_type" {
+  description = "Type of instance to use in the eks cluster"
+  default     = "t3.medium"
+}
+
 variable "availability_zones" {
   description = "a comma-separated list of availability zones"
   default     = ["us-east-1a", "us-east-1b", "us-east-1c"]

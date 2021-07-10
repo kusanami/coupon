@@ -20,15 +20,10 @@ variable "kubernetes_deployment_image_tag" {
   default = "latest"
 }
 
-variable "aws_iam_policy_name" {
-  default = "KubernetesExternalDNS"
-  description = "Name of AWS IAM policy."
-}
-
-variable "aws_iam_role_for_policy" {
-  description = "AWS role name for attaching IAM policy"
-}
-
 variable "region" {
+  description = "the AWS region in which resources are created"
+}
+
+variable "cluster_issuer" {
   description = "the AWS region in which resources are created"
 }

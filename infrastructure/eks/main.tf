@@ -151,12 +151,12 @@ resource "aws_eks_node_group" "main" {
   subnet_ids      = var.private_subnets.*.id
 
   scaling_config {
-    desired_size = 2
-    max_size     = 6
-    min_size     = 2
+    desired_size = var.instances_desired_size
+    max_size     = var.instances_max_size
+    min_size     = var.instances_min_size
   }
 
-  instance_types  = ["t3.medium"]
+  instance_types  = [var.instance_type]
 
   version = var.k8s_version
 

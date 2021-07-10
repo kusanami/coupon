@@ -23,15 +23,19 @@ module "vpc" {
 }
 
 module "eks" {
-  source            = "./eks"
-  name              = var.name
-  environment       = var.environment
-  region            = var.region
-  k8s_version       = var.k8s_version
-  vpc_id            = module.vpc.id
-  private_subnets   = module.vpc.private_subnets
-  public_subnets    = module.vpc.public_subnets
-  kubeconfig_path   = var.kubeconfig_path
+  source                   = "./eks"
+  name                     = var.name
+  environment              = var.environment
+  region                   = var.region
+  k8s_version              = var.k8s_version
+  vpc_id                   = module.vpc.id
+  private_subnets          = module.vpc.private_subnets
+  public_subnets           = module.vpc.public_subnets
+  kubeconfig_path          = var.kubeconfig_path
+  instances_desired_size   = var.instances_desired_size
+  instances_max_size       = var.instances_max_size
+  instances_min_size       = var.instances_min_size
+  instance_type            = var.instance_type
 }
 
 module "alb-controller" {
@@ -44,15 +48,15 @@ module "alb-controller" {
   cluster_id            = module.eks.cluster_id
   config_path           = module.eks.config_path
   domain                = var.domain
-  worker_iam_role  = module.eks.worker_iam_role
+  worker_iam_role       = module.eks.worker_iam_role
 
   depends_on = [module.eks]
 }
 
 module "external-dns" {
-  source                   = "./external-dns"
-  region                   = var.region
-  aws_iam_role_for_policy  = module.eks.worker_iam_role
+  source                = "./external-dns"
+  region                = var.region
+  cluster_issuer        = module.eks.cluster_issuer
 
   depends_on = [module.eks]
 }
@@ -74,4 +78,23 @@ module "autoscaler" {
   worker_iam_role  = module.eks.worker_iam_role
 
   depends_on = [module.eks]
+}
+
+module "coupon-service" {
+  source                = "./coupon-service"
+  region                = var.region
+  config_path           = module.eks.config_path
+
+  depends_on = [module.alb-controller]
+}
+
+terraform {
+  backend "s3" {
+
+    bucket         = "tfstate-coupon-challenge"
+    key            = "global/s3/tfstate-coupon-challenge/terraform.tfstate"
+    region         = "us-east-1"
+    dynamodb_table = "coupon-challenge"
+    encrypt        = true
+  }
 }
