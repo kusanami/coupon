@@ -7,7 +7,3 @@ output "cluster_id" {
   description = "ID of the created cluster"
   value       = module.eks.cluster_id
 }
-
-output "worker_iam_role" {
-  value       = module.eks.worker_iam_role
-}

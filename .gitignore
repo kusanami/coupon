@@ -17,5 +17,5 @@ README.html
 *.iml
 .idea
 *terraform
-*.terraform
-
+*.terraform*
+*.tfvars

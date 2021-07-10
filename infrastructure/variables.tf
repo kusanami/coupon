@@ -53,16 +53,6 @@ variable "public_subnets" {
   default     = ["10.0.16.0/20", "10.0.48.0/20", "10.0.80.0/20"]
 }
 
-variable "kubeconfig_path" {
-  description = "Path where the config file for kubectl should be written to"
-  default     = "/Users/luisruiz/workspace/alb-ingress-controller/coupon"
-}
-
-variable "config_path" {
-  description = "Config file to create resources in the EKS cluster"
-  default     = "/Users/luisruiz/workspace/alb-ingress-controller/coupon/config"
-}
-
 variable "k8s_version" {
   description = "kubernetes version to use in the EKS cluster"
   default     = "1.19"
@@ -78,29 +68,31 @@ variable "domain" {
   default     = "couponlm.net"
 }
 
+# Secret variables
+variable "kubeconfig_path" {
+  description = "path to a kubernetes config file"
+  type        = string
+}
+
 variable "map_accounts" {
-  description  = "Additional AWS account numbers to add to the aws-auth configmap"
-  default      = [ "763172254126" ]
-  }
+  description = "Additional AWS account numbers to add to the aws-auth configmap."
+  type        = list(string)
+}
 
 variable "map_roles" {
-  description = "Additional IAM roles to add to the aws-auth configmap"
-  default     = [
-    {
-      rolearn  = "arn:aws:iam::763172254126:role/aws-service-role/eks-fargate.amazonaws.com/AWSServiceRoleForAmazonEKSForFargate"
-      username = "AWSServiceRoleForAmazonEKSForFargate"
-      groups   = ["system:masters"]
-    },
-  ]
+  description = "Additional IAM roles to add to the aws-auth configmap."
+  type = list(object({
+    rolearn  = string
+    username = string
+    groups   = list(string)
+  }))
 }
 
 variable "map_users" {
   description = "Additional IAM users to add to the aws-auth configmap."
-  default     = [
-    {
-      userarn  = "arn:aws:iam::763172254126:user/terraform"
-      username = "terraform"
-      groups   = ["system:masters"]
-    },
-  ]
+  type = list(object({
+    userarn  = string
+    username = string
+    groups   = list(string)
+  }))
 }
