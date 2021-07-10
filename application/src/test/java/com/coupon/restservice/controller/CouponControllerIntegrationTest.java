@@ -6,11 +6,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.coupon.restservice.RestServiceApplication;
 import com.coupon.restservice.model.RequestCoupon;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -23,12 +26,18 @@ import org.springframework.test.web.servlet.MvcResult;
  * @author <a href="mailto:luism_fr@hotmail.com">Luis Ruiz</a>
  * @since 1.0.0
  */
-@SpringBootTest
+@SpringBootTest(classes = RestServiceApplication.class)
 @AutoConfigureMockMvc
 public class CouponControllerIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    /**
+     * Circuit breaker registry
+     */
+    @Autowired
+    private CircuitBreaker circuitBreakerMeli;
 
     @Test
     public void shouldReturn200ListWithValidIdItem_whenRequestIsValid() throws Exception {
@@ -44,25 +53,41 @@ public class CouponControllerIntegrationTest {
 
         String responseBody = mvcResult.getResponse().getContentAsString();
 
-        assertEquals(responseBody, expectResponse);
+        assertEquals(expectResponse,responseBody);
     }
 
     @Test
-    public void shouldReturn404EmptyList_whenAmountInCouponNotReachForNothing() {
+    public void shouldReturn404EmptyList_whenAmountInCouponNotReachForNothing() throws Exception {
 
+        MvcResult mvcResult = this.mockMvc.perform(post("/coupon")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(getRequestCoupon(10000.0f)))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andReturn();
 
+        String responseBody = mvcResult.getResponse().getContentAsString();
+
+        assertEquals("[]", responseBody);
     }
 
     @Test
-    public void shouldReturn404EmptyList_whenHandleSomeException() {
+    public void shouldReturn404EmptyList_whenCircuitBreakerIsOpen() throws Exception {
 
+        circuitBreakerMeli.transitionToForcedOpenState();
 
-    }
+        MvcResult mvcResult = this.mockMvc.perform(post("/coupon")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(getRequestCoupon(60000.0f)))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andReturn();
 
-    @Test
-    public void shouldReturn404EmptyList_whenCircuitBreakerIsOpen() {
+        String responseBody = mvcResult.getResponse().getContentAsString();
 
+        assertEquals("[]", responseBody);
 
+        circuitBreakerMeli.transitionToClosedState();
     }
 
     private String getRequestCoupon(float amountCoupon) {
