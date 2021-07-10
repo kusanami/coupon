@@ -1,13 +1,12 @@
 package com.coupon.restservice.client.meli;
 
-import static com.coupon.restservice.client.meli.util.MapperItemMeli.itemMeliMapperToItem;
+import static com.coupon.restservice.client.meli.helper.MapperItemMeli.itemMeliMapperToItem;
 import static java.lang.String.join;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.coupon.restservice.client.meli.util.MapperItemMeli;
 import com.coupon.restservice.model.Item;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import org.springframework.stereotype.Service;

@@ -1,5 +1,5 @@
 meli:
-  url: "https://api.mercadolibre.com/"
+  url: "https://api.smercadolibre.com/"
 
 server:
   port: 8080
